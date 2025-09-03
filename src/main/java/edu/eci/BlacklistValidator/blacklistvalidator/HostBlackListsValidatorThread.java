@@ -1,4 +1,4 @@
-package edu.eci.arsw.blacklistvalidator;
+package edu.eci.BlacklistValidator.blacklistvalidator;
 
 import edu.eci.arsw.spamkeywordsdatasource.HostBlacklistsDataSourceFacade;
 
