@@ -35,11 +35,11 @@ public class Immortal extends Thread {
 
         while (true) {
             synchronized (lock) {
-            while(paused) {
-                try {
-                    lock.wait();
-                } catch (InterruptedException e) {}
-            }
+                while(paused) {
+                    try {
+                        lock.wait();
+                    } catch (InterruptedException e) {}
+                }
             }
 
             Immortal im;
@@ -55,7 +55,20 @@ public class Immortal extends Thread {
 
             im = immortalsPopulation.get(nextFighterIndex);
 
-            this.fight(im);
+            if (myIndex > nextFighterIndex){
+                synchronized (im){
+                    synchronized (this){
+                        this.fight(im);
+                    }
+                }
+            }
+            else {
+                synchronized (this){
+                    synchronized (im){
+                        this.fight(im);
+                    }
+                }
+            }
 
             try {
                 Thread.sleep(1);
@@ -68,7 +81,6 @@ public class Immortal extends Thread {
     }
 
     public void fight(Immortal i2) {
-
         if (i2.getHealth() > 0) {
             i2.changeHealth(i2.getHealth() - defaultDamageValue);
             this.health += defaultDamageValue;
@@ -76,7 +88,6 @@ public class Immortal extends Thread {
         } else {
             updateCallback.processReport(this + " says:" + i2 + " is already dead!\n");
         }
-
     }
 
     public void changeHealth(int v) {

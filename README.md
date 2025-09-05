@@ -5,6 +5,10 @@
 
 #### Ejercicio – programación concurrente, condiciones de carrera y sincronización de hilos. EJERCICIO INDIVIDUAL O EN PAREJAS.
 
+#### Nombres
+- Jose David Castillo Rodriguez
+- Andres Felipe Calderon Ramirez
+
 ##### Parte I – Antes de terminar la clase.
 
 Control de hilos con wait/notify. Productor/consumidor.
@@ -59,13 +63,17 @@ Respuesta: La cantidad de vida que hay en el codigo es de 100, ya que esto toma 
 
 3. Ejecute la aplicación y verifique cómo funcionan las opción ‘pause and check’. Se cumple el invariante?.
 
-No se cumple, ya que si tenemos en cuenta que los inmortales solo tienen una cantidad de vida maxima que seria 100, estos aumentan de vida indefinidamente, como hasta 1000 o mas, ingnorando la vida maxima que deberian tener, haciendo que la invairante sea mas de lo que deberia decir
+No se cumple, esto lo podemos comprobar en un caso de 2 inmortales donde llega un punto en el cual uno tiene 10 de vida y el otro esta muerto, esto nos da 10 de vida total donde deberia haber 200.
+
+![]
 
 4. Una primera hipótesis para que se presente la condición de carrera para dicha función (pause and check), es que el programa consulta la lista cuyos valores va a imprimir, a la vez que otros hilos modifican sus valores. Para corregir esto, haga lo que sea necesario para que efectivamente, antes de imprimir los resultados actuales, se pausen todos los demás hilos. Adicionalmente, implemente la opción ‘resume’.
 
-
+Se le agrega un objeto lock a el objeto inmortal el cual esta sincronizado y se encarga de cuadrar la pausa, se tiene un metodo el cual activa y desactiva esto el cual es usado por controlframe.
 
 5. Verifique nuevamente el funcionamiento (haga clic muchas veces en el botón). Se cumple o no el invariante?.
+
+No, el invariante sigue fallando debido a que solo se miro la funcion de pausa.
 
 6. Identifique posibles regiones críticas en lo que respecta a la pelea de los inmortales. Implemente una estrategia de bloqueo que evite las condiciones de carrera. Recuerde que si usted requiere usar dos o más ‘locks’ simultáneamente, puede usar bloques sincronizados anidados:
 
@@ -76,6 +84,8 @@ No se cumple, ya que si tenemos en cuenta que los inmortales solo tienen una can
 		}
 	}
 	```
+
+	
 
 7. Tras implementar su estrategia, ponga a correr su programa, y ponga atención a si éste se llega a detener. Si es así, use los programas jps y jstack para identificar por qué el programa se detuvo.
 
