@@ -2,6 +2,7 @@ package edu.eci.arsw.highlandersim;
 
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Immortal extends Thread {
 
@@ -11,7 +12,7 @@ public class Immortal extends Thread {
     
     private int defaultDamageValue;
 
-    private final List<Immortal> immortalsPopulation;
+    private final CopyOnWriteArrayList<Immortal> immortalsPopulation;
 
     private final String name;
 
@@ -21,8 +22,9 @@ public class Immortal extends Thread {
 
     private final Object lock = new Object();
 
+    private boolean isAlive = true;
 
-    public Immortal(String name, List<Immortal> immortalsPopulation, int health, int defaultDamageValue, ImmortalUpdateReportCallback ucb) {
+    public Immortal(String name, CopyOnWriteArrayList<Immortal> immortalsPopulation, int health, int defaultDamageValue, ImmortalUpdateReportCallback ucb) {
         super(name);
         this.updateCallback=ucb;
         this.name = name;
@@ -33,13 +35,19 @@ public class Immortal extends Thread {
 
     public void run() {
 
-        while (true) {
+        while (isAlive) {
             synchronized (lock) {
                 while(paused) {
                     try {
                         lock.wait();
                     } catch (InterruptedException e) {}
                 }
+            }
+
+            if(this.health<=0) {
+                immortalsPopulation.remove(this);
+                this.isAlive = false;
+                break;
             }
 
             Immortal im;
@@ -51,6 +59,10 @@ public class Immortal extends Thread {
             //avoid self-fight
             if (nextFighterIndex == myIndex) {
                 nextFighterIndex = ((nextFighterIndex + 1) % immortalsPopulation.size());
+            }
+
+            if(immortalsPopulation.size()==1){
+                this.isAlive = false;
             }
 
             im = immortalsPopulation.get(nextFighterIndex);
@@ -113,6 +125,10 @@ public class Immortal extends Thread {
             paused = false;
             lock.notifyAll();
         }
+    }
+
+    public void isDead() {
+        isAlive = false;
     }
 
 }
